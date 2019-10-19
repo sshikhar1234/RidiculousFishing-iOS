@@ -20,8 +20,7 @@ class GameScene: SKScene {
     private var hook : SKSpriteNode!
     private var bg_occean : SKSpriteNode!
     private var sky : SKSpriteNode!
-        
-        
+    private var randomFish: SKSpriteNode!
     
     override func didMove(to view: SKView) {
         
@@ -32,10 +31,24 @@ class GameScene: SKScene {
         self.bg_occean = self.childNode(withName: "bg_occean") as! SKSpriteNode
         self.sky = self.childNode(withName: "sky") as! SKSpriteNode
                                      
+     printScreenInfo()
         
         
     }
     
+    func printScreenInfo(){
+        print("Width: \(size.width)")
+        print("Height: \(size.height)")
+    }
+    func spawnCreatures(){
+        let numberOfImages: UInt32 = 2
+        let random = arc4random_uniform(numberOfImages)
+        let imageName = "fish\(random)"
+        self.randomFish = SKSpriteNode(imageNamed: imageName)
+        self.randomFish.position.x = 100
+        self.randomFish.position.y = 100
+        addChild(self.randomFish)
+    }
     
     func touchDown(atPoint pos : CGPoint) {
         if let n = self.spinnyNode?.copy() as! SKShapeNode? {
@@ -68,6 +81,7 @@ class GameScene: SKScene {
                     return
                 }
         let location = mouseTouch!.location(in: self)
+//        print("location: "\(location)")
         let nodeTouched = atPoint(location).name
         if(nodeTouched == "ship"){
             
@@ -87,8 +101,11 @@ class GameScene: SKScene {
             self.ship.run(moveUpAnimation)
 
             //4. Move the hook down
-            moveDownAnimation = SKAction.moveBy(x: 0, y: -10, duration: 1.5)
+            moveDownAnimation = SKAction.moveBy(x: 0, y: -2, duration: 1.5)
             self.hook.run(moveDownAnimation)
+
+            //5. Time to spawn random fishes
+            spawnCreatures()
 
         }
         
@@ -116,7 +133,18 @@ class GameScene: SKScene {
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
-        
+        if(randomFish != nil){
+            
+            if(self.randomFish.position.x<size.width){
+                self.randomFish.position.x = self.randomFish.position.x+4
+            //    print(self.randomFish.position.x)
+            }
+//            var xPos = self.randomFish.position.x
+//            if(xPos == size.width){
+//                let flip = SKAction.scaleX(to: -1, duration: 0.4)
+//                randomFish.run(flip)
+//            }
+        }
         
     }
 }
